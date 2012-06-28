@@ -21,7 +21,7 @@ void dumb_init_input(void);
 /* dumb-output.c */
 void dumb_init_output(void);
 bool dumb_output_handle_setting(const char *setting, bool show_cursor,
-				bool startup);
+                                bool startup);
 void dumb_show_screen(bool show_cursor);
 void dumb_show_prompt(bool show_cursor, char line_type);
 void dumb_dump_screen(void);

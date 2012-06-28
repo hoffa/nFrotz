@@ -167,10 +167,10 @@ void z_piracy (void)
 
 int cdecl main (int argc, char *argv[])
 {
-    int new_argc = 6;
+    int new_argc = 5;
     char *new_argv[] = {
         argv[0],
-        "-p",
+        //"-p",
         "-w 53",
         "-h 30",
         "-Z 2",
