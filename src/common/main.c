@@ -183,8 +183,8 @@ int cdecl main (int argc, char *argv[])
     clrscr();
     nio_InitConsole (&console, 51, 28, 6, 8, WHITE, BLACK);
     if (!ext_start)
-        nio_printf(&console, "nFrotz %s by Christoffer Rehn\n"
-                             "Ported from the original Frotz (frotz.sf.net)", NFROTZ_VERSION);
+        PRINT ("nFrotz %s by Christoffer Rehn\n"
+               "Ported from the original Frotz (frotz.sf.net)", NFROTZ_VERSION);
     nio_DrawConsole (&console);
     if (!ext_start) {
         wait_key_pressed();

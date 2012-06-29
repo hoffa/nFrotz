@@ -74,11 +74,11 @@ static int zgetopt (int argc, char *argv[], const char *options)
     { pos = 1; zoptind++; }
     p = strchr (options, zoptopt);
     if (zoptopt == ':' || p == NULL) {
-    fputs ("illegal option -- ", stderr);
+    PRINT_ALT("illegal option -- ");
     goto error;
     } else if (p[1] == ':')
     if (zoptind >= argc) {
-        fputs ("option requires an argument -- ", stderr);
+        PRINT_ALT("option requires an argument -- ");
         goto error;
     } else {
         zoptarg = argv[zoptind];
@@ -88,8 +88,7 @@ static int zgetopt (int argc, char *argv[], const char *options)
     }
     return zoptopt;
 error:
-    fputc (zoptopt, stderr);
-    fputc ('\n', stderr);
+    PRINT_ALT("%c\n", zoptopt);
     return '?';
 }/* zgetopt */
 
@@ -135,14 +134,14 @@ void os_process_arguments(int argc, char *argv[])
     } while (c != EOF);
 
     if (((argc - zoptind) != 1) && ((argc - zoptind) != 2)) {
-    nio_printf(&console, "FROTZ V%s\tdumb interface.\n", VERSION);
-    nio_PrintStr(&console, INFORMATION);
-    nio_printf(&console, "\t-Z # error checking mode (default = %d)\n"
-        "\t     %d = don't report errors   %d = report first error\n"
-        "\t     %d = report all errors     %d = exit after any error\n\n",
-        ERR_DEFAULT_REPORT_MODE, ERR_REPORT_NEVER,
-        ERR_REPORT_ONCE, ERR_REPORT_ALWAYS, ERR_REPORT_FATAL);
-    exit(1);
+        PRINT_ALT("FROTZ V%s\tdumb interface.\n", VERSION);
+        PRINT_ALT(INFORMATION);
+        PRINT_ALT("\t-Z # error checking mode (default = %d)\n"
+                  "\t     %d = don't report errors   %d = report first error\n"
+                  "\t     %d = report all errors     %d = exit after any error\n\n",
+                  ERR_DEFAULT_REPORT_MODE, ERR_REPORT_NEVER,
+                  ERR_REPORT_ONCE, ERR_REPORT_ALWAYS, ERR_REPORT_FATAL);
+        exit(1);
     }
 /*
     if (((argc - zoptind) != 1) && ((argc - zoptind) != 2)) {
@@ -194,7 +193,7 @@ void os_restart_game (int stage) {}
 
 void os_fatal (const char *s)
 {
-    fprintf(stderr, "\nFatal error: %s\n", s);
+    PRINT_ALT("\nFatal error: %s\n", s);
     CLEANUP();
     exit(1);
 }

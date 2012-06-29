@@ -86,7 +86,7 @@ void dumb_init_pictures (char *filename)
     else {
         h_flags &= ~GRAPHICS_FLAG;
         if (filename)
-            fprintf(stderr, "Warning: could not read graphics file %s\n", filename);
+            PRINT_ALT("Warning: could not read graphics file %s\n", filename);
     }
 }
 

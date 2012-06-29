@@ -106,8 +106,8 @@ static void translate_special_chars(char *s)
                         *dest++ = ZC_FKEY_MIN + src[-1] - '0' - 1; break;
                     case '0': *dest++ = ZC_FKEY_MIN + 9; break;
                     default:
-                        fprintf(stderr, "DUMB-FROTZ: unknown escape char: %c\n", src[-1]);
-                        fprintf(stderr, "Enter \\help to see the list\n");
+                        PRINT_ALT("DUMB-FROTZ: unknown escape char: %c\n", src[-1]);
+                        PRINT_ALT("Enter \\help to see the list\n");
                 }
         }
     *dest = '\0';
@@ -141,14 +141,14 @@ bool dumb_handle_setting(const char *setting, bool show_cursor, bool startup)
 {
     if (!strncmp(setting, "sf", 2)) {
         speed = atof(&setting[2]);
-        nio_printf(&console, "Speed Factor %g\n", speed);
+        PRINT("Speed Factor %g\n", speed);
     } else if (!strncmp(setting, "mp", 2)) {
         toggle(&do_more_prompts, setting[2]);
-        nio_printf(&console, "More prompts %s\n", do_more_prompts ? "ON" : "OFF");
+        PRINT("More prompts %s\n", do_more_prompts ? "ON" : "OFF");
     } else {
         if (!strcmp(setting, "set")) {
-            nio_printf(&console, "Speed Factor %g\n", speed);
-            nio_printf(&console, "More Prompts %s\n", do_more_prompts ? "ON" : "OFF");
+            PRINT("Speed Factor %g\n", speed);
+            PRINT("More Prompts %s\n", do_more_prompts ? "ON" : "OFF");
         }
         return dumb_output_handle_setting(setting, show_cursor, startup);
     }
@@ -179,7 +179,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
     for (;;) {
         char *command;
         if (prompt)
-            nio_PrintStr(&console, prompt);
+            PRINT(prompt);
         else
             dumb_show_prompt(show_cursor, (timeout ? "tTD" : ")>}")[type]);
         getline(s);
@@ -223,7 +223,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
             }
         } else if (!strcmp(command, "d")) {
             if (type != INPUT_LINE_CONTINUED)
-                fprintf(stderr, "DUMB-FROTZ: No input to discard\n");
+                PRINT_ALT("DUMB-FROTZ: No input to discard\n");
             else {
                 dumb_discard_old_input(strlen(continued_line_chars));
                 continued_line_chars[0] = '\0';
@@ -231,7 +231,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
             }
         } else if (!strcmp(command, "help")) {
             if (!do_more_prompts)
-                nio_PrintStr(&console, runtime_usage);
+                PRINT(runtime_usage);
             else {
                 char *current_page, *next_page;
                 current_page = next_page = runtime_usage;
@@ -239,11 +239,11 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
                     int i;
                     for (i = 0; (i < h_screen_rows - 2) && *next_page; i++)
                         next_page = strchr(next_page, '\n') + 1;
-                    nio_printf(&console, "%.*s", next_page - current_page, current_page);
+                    PRINT("%.*s", next_page - current_page, current_page);
                     current_page = next_page;
                     if (!*current_page)
                         break;
-                    nio_printf(&console, "HELP: Type <return> for more, or q <return> to stop: ");
+                    PRINT("HELP: Type <return> for more, or q <return> to stop: ");
                     getline(s);
                     if (!strcmp(s, "q\n"))
                         break;
@@ -252,8 +252,8 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
         } else if (!strcmp(command, "s")) {
             dumb_dump_screen();
         } else if (!dumb_handle_setting(command, show_cursor, FALSE)) {
-            fprintf(stderr, "DUMB-FROTZ: unknown command: %s\n", s);
-            fprintf(stderr, "Enter \\help to see the list of commands\n");
+            PRINT_ALT("DUMB-FROTZ: unknown command: %s\n", s);
+            PRINT_ALT("Enter \\help to see the list of commands\n");
         }
     }
 }
@@ -367,7 +367,7 @@ int os_read_file_name (char *file_name, const char *default_name, int flag)
     sprintf(prompt, "Please enter a filename [%s]: ", default_name);
     dumb_read_misc_line(buf, prompt);
     if (strlen(buf) > MAX_FILE_NAME) {
-        nio_printf(&console, "Filename too long\n");
+        PRINT("Filename too long\n");
         return FALSE;
     }
 

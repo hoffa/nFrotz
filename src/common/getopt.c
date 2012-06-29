@@ -9,6 +9,7 @@
  */
 
 #include <os.h>
+#include "frotz.h"
 
 #ifndef MSDOS_16BIT
 #define cdecl
@@ -38,14 +39,14 @@ int cdecl getopt (int argc, char *argv[], const char *options)
 
     if (optopt == ':' || p == NULL) {
 
-	fputs ("illegal option -- ", stdout);
+	PRINT_ALT ("illegal option -- ");
 	goto error;
 
     } else if (p[1] == ':') {
 
 	if (optind >= argc) {
 
-	    fputs ("option requires an argument -- ", stdout);
+	    PRINT_ALT ("option requires an argument -- ");
 	    goto error;
 
 	} else {

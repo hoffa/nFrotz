@@ -6,6 +6,7 @@
  * Copyright 1997, 1998 Alembic Petrofsky <alembic@petrofsky.berkeley.ca.us>.
  * Any use permitted provided this notice stays intact.
  */
+
 #include "../common/frotz.h"
 
 /* from ../common/setup.h */

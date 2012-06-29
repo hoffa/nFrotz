@@ -62,7 +62,7 @@ static int hide_lines = 0;
 /* Reverse-video display styles.  */
 static enum {
     RV_NONE, RV_DOUBLESTRIKE, RV_UNDERLINE, RV_CAPS,
-} rv_mode = RV_NONE;
+} rv_mode = RV_CAPS;
 static char *rv_names[] = {"NONE", "DOUBLESTRIKE", "UNDERLINE", "CAPS"};
 static char rv_blank_char = ' ';
 
@@ -225,10 +225,10 @@ void os_scroll_area (int top, int left, int bottom, int right, int units)
 
 int os_font_data(int font, int *height, int *width)
 {
-        if (font == TEXT_FONT) {
-            *height = 1; *width = 1; return 1;
-        }
-        return 0;
+    if (font == TEXT_FONT) {
+        *height = 1; *width = 1; return 1;
+    }
+    return 0;
 }
 
 void os_set_colour (int x, int y) {}
@@ -240,20 +240,20 @@ static void show_cell(cell cel)
     char c = cell_char(cel);
     switch (cell_style(cel)) {
         case 0:
-            nio_PrintChar(&console, c);
+            PRINT("%c", c);
             break;
         case PICTURE_STYLE:
-            nio_PrintChar(&console, show_pictures ? c : ' ');
+            PRINT("%c", show_pictures ? c : ' ');
             break;
         case REVERSE_STYLE:
             if (c == ' ')
-                nio_PrintChar(&console, rv_blank_char);
+                PRINT("%c", rv_blank_char);
             else
                 switch (rv_mode) {
-                    case RV_NONE: nio_PrintChar(&console, c); break;
-                    case RV_CAPS: nio_PrintChar(&console, toupper(c)); break;
-                    case RV_UNDERLINE: nio_PrintChar(&console, '_'); nio_PrintChar(&console, '\b'); nio_PrintChar(&console, c); break;
-                    case RV_DOUBLESTRIKE: nio_PrintChar(&console, c); nio_PrintChar(&console, '\b'); nio_PrintChar(&console, c); break;
+                    case RV_NONE: PRINT("%c", c); break;
+                    case RV_CAPS: PRINT("%c", toupper(c)); break;
+                    case RV_UNDERLINE: PRINT("%c", '_'); PRINT("%c", '\b'); PRINT("%c", c); break;
+                    case RV_DOUBLESTRIKE: PRINT("%c", c); PRINT("%c", '\b'); PRINT("%c", c); break;
                 }
             break;
     }
@@ -269,12 +269,12 @@ static bool will_print_blank(cell c)
 static void show_line_prefix(int row, char c)
 {
     if (show_line_numbers)
-        nio_printf(&console, (row == -1) ? ".." : "%02d", (row + 1) % 100);
+        PRINT((row == -1) ? ".." : "%02d", (row + 1) % 100);
     if (show_line_types)
-        nio_PrintChar(&console, c);
+        PRINT("%c", c);
     /* Add a separator char (unless there's nothing to separate).  */
     if (show_line_numbers || show_line_types)
-        nio_PrintChar(&console, ' ');
+        PRINT("%c", ' ');
 }
 
 /* Print a row to stdout.  */
@@ -294,7 +294,7 @@ static void show_row(int r)
         for (c = 0; c <= last; c++)
             show_cell(dumb_row(r)[c]);
     }
-    nio_PrintChar(&console, '\n');
+    PRINT("%c", '\n');
 }
 
 /* Print the part of the cursor row before the cursor.  */
@@ -414,9 +414,9 @@ void os_reset_screen(void)
 void os_beep (int volume)
 {
     if (visual_bell)
-        nio_printf("[%s-PITCHED BEEP]\n", (volume == 1) ? "HIGH" : "LOW");
+        PRINT("[%s-PITCHED BEEP]\n", (volume == 1) ? "HIGH" : "LOW");
     else
-        nio_PrintChar(&console, '\a'); /* so much for dumb.  */
+        PRINT("%c", '\a'); /* so much for dumb.  */
 }
 
 
@@ -442,7 +442,7 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
 
     if (!strncmp(setting, "pb", 2)) {
         toggle(&show_pictures, setting[2]);
-        nio_printf(&console, "Picture outlines display %s\n", show_pictures ? "ON" : "OFF");
+        PRINT("Picture outlines display %s\n", show_pictures ? "ON" : "OFF");
         if (startup)
             return TRUE;
         for (i = 0; i < screen_cells; i++)
@@ -451,16 +451,16 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
 
     } else if (!strncmp(setting, "vb", 2)) {
         toggle(&visual_bell, setting[2]);
-        nio_printf(&console, "Visual bell %s\n", visual_bell ? "ON" : "OFF");
+        PRINT("Visual bell %s\n", visual_bell ? "ON" : "OFF");
         os_beep(1); os_beep(2);
 
     } else if (!strncmp(setting, "ln", 2)) {
         toggle(&show_line_numbers, setting[2]);
-        nio_printf(&console, "Line numbering %s\n", show_line_numbers ? "ON" : "OFF");
+        PRINT("Line numbering %s\n", show_line_numbers ? "ON" : "OFF");
 
     } else if (!strncmp(setting, "lt", 2)) {
         toggle(&show_line_types, setting[2]);
-        nio_printf(&console, "Line-type display %s\n", show_line_types ? "ON" : "OFF");
+        PRINT("Line-type display %s\n", show_line_types ? "ON" : "OFF");
 
     } else if (*setting == 'c') {
         switch (setting[1]) {
@@ -470,8 +470,8 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
         case 'h': hide_lines = atoi(&setting[2]); break;
         default: return FALSE;
         }
-        nio_printf(&console, "Compression mode %s, hiding top %d lines\n",
-         compression_names[compression_mode], hide_lines);
+        PRINT("Compression mode %s, hiding top %d lines\n",
+                             compression_names[compression_mode], hide_lines);
 
     } else if (*setting == 'r') {
         switch (setting[1]) {
@@ -482,28 +482,25 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
             case 'b': rv_blank_char = setting[2] ? setting[2] : ' '; break;
             default: return FALSE;
         }
-        nio_printf(&console, "Reverse-video mode %s, blanks reverse to '%c': ",
-                             rv_names[rv_mode], rv_blank_char);
+        PRINT("Reverse-video mode %s, blanks reverse to '%c': ", rv_names[rv_mode], rv_blank_char);
         for (p = "sample reverse text"; *p; p++)
             show_cell(make_cell(REVERSE_STYLE, *p));
-        nio_PrintChar(&console, '\n');
+        PRINT("%c", '\n');
         for (i = 0; i < screen_cells; i++)
             screen_changes[i] = (cell_style(screen_data[i]) == REVERSE_STYLE);
         dumb_show_screen(show_cursor);
 
     } else if (!strcmp(setting, "set")) {
-        nio_printf(&console, "Compression Mode %s, hiding top %d lines\n",
-                             compression_names[compression_mode], hide_lines);
-        nio_printf(&console, "Picture Boxes display %s\n", show_pictures ? "ON" : "OFF");
-        nio_printf(&console, "Visual Bell %s\n", visual_bell ? "ON" : "OFF");
+        PRINT("Compression Mode %s, hiding top %d lines\n", compression_names[compression_mode], hide_lines);
+        PRINT("Picture Boxes display %s\n", show_pictures ? "ON" : "OFF");
+        PRINT("Visual Bell %s\n", visual_bell ? "ON" : "OFF");
         os_beep(1); os_beep(2);
-        nio_printf(&console, "Line Numbering %s\n", show_line_numbers ? "ON" : "OFF");
-        nio_printf(&console, "Line-Type display %s\n", show_line_types ? "ON" : "OFF");
-        nio_printf(&console, "Reverse-Video mode %s, Blanks reverse to '%c': ",
-                             rv_names[rv_mode], rv_blank_char);
+        PRINT("Line Numbering %s\n", show_line_numbers ? "ON" : "OFF");
+        PRINT("Line-Type display %s\n", show_line_types ? "ON" : "OFF");
+        PRINT("Reverse-Video mode %s, Blanks reverse to '%c': ", rv_names[rv_mode], rv_blank_char);
         for (p = "sample reverse text"; *p; p++)
             show_cell(make_cell(REVERSE_STYLE, *p));
-        nio_PrintChar(&console, '\n');
+        PRINT("\n");
     } else
         return FALSE;
     return TRUE;
@@ -511,6 +508,9 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
 
 void dumb_init_output(void)
 {
+    nl_relocdata((unsigned *)compression_names, 3);
+    nl_relocdata((unsigned *)rv_names, 4);
+
     if (h_version == V3) {
         h_config |= CONFIG_SPLITSCREEN;
         h_flags &= ~OLD_SOUND_FLAG;

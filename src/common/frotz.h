@@ -16,10 +16,22 @@
 
 #define NFROTZ_VERSION "0.0.1"
 #define RTC() *(volatile unsigned *)0x90090000
+
 #define CLEANUP() do { \
     nio_CleanUp(&console); \
     if (has_colors) \
         lcd_incolor(); \
+} while (0)
+
+#define PRINT(fmt, args...) do { \
+    nio_printf(&console, fmt, ## args); \
+} while (0)
+
+#define PRINT_ALT(fmt, args...) do { \
+    nio_SetColor(&console, WHITE, WHITE / 2); \
+    fprintf(stderr, fmt, ## args); \
+    nio_printf(&console, fmt, ## args); \
+    nio_SetColor(&console, WHITE, BLACK); \
 } while (0)
 
 extern nio_console console;
