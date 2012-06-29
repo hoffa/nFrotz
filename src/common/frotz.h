@@ -60,19 +60,19 @@ typedef unsigned char zchar;
 #endif
 
 #ifndef DEFAULT_SAVE_NAME
-#define DEFAULT_SAVE_NAME "story.sav"
+#define DEFAULT_SAVE_NAME "story.sav.tns"
 #endif
 #ifndef DEFAULT_SCRIPT_NAME
-#define DEFAULT_SCRIPT_NAME "story.scr"
+#define DEFAULT_SCRIPT_NAME "story.scr.tns"
 #endif
 #ifndef DEFAULT_COMMAND_NAME
-#define DEFAULT_COMMAND_NAME "story.rec"
+#define DEFAULT_COMMAND_NAME "story.rec.tns"
 #endif
 #ifndef DEFAULT_AUXILARY_NAME
-#define DEFAULT_AUXILARY_NAME "story.aux"
+#define DEFAULT_AUXILARY_NAME "story.aux.tns"
 #endif
 #ifndef DEFAULT_SAVE_DIR	/* DG */
-#define DEFAULT_SAVE_DIR ".frotz-saves"
+#define DEFAULT_SAVE_DIR "/documents"
 #endif
 
 /*** Story file header format ***/

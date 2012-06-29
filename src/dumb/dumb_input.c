@@ -64,39 +64,14 @@ enum input_type {
     INPUT_LINE_CONTINUED,
 };
 
-/* get a character.  Exit with no fuss on EOF.  */
-static int xgetchar(void)
-{
-    while (any_key_pressed())
-        ;
-    int c = nio_GetChar(&console);
-    if (c == EOF) {
-        if (feof(stdin)) {
-            fprintf(stderr, "\nEOT\n");
-            exit(0);
-        }
-        os_fatal(strerror(errno));
-    }
-    return c;
-}
-
-/* Read one line, including the newline, into s.  Safely avoids buffer
- * overruns (but that's kind of pointless because there are several
- * other places where I'm not so careful).  */
+/* Read one line, including the newline, into s. */
 static void getline(char *s)
 {
-    int c;
-    char *p = s;
-    while (p < s + INPUT_BUFFER_SIZE - 1)
-    if ((*p++ = xgetchar()) == '\n') {
-        *p = '\0';
-        return;
-    }
-    p[-1] = '\n';
-    p[0] = '\0';
-    while ((c = xgetchar()) != '\n')
-        ;
-    nio_printf(&console, "Line too long, truncated to %s\n", s - INPUT_BUFFER_SIZE);
+    size_t length;
+    nio_GetStr(&console, s);
+    length = strlen(s);
+    s[length] = '\n';
+    s[length + 1] = '\0';
 }
 
 /* Translate in place all the escape characters in s.  */
