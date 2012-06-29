@@ -184,12 +184,14 @@ char *_fgets(char *s, int n, FILE *stream) {
 void install_nfrotz(void) {
     if (show_msgbox_2b("Installer",
                        "nFrotz " NFROTZ_VERSION " (based on Frotz " VERSION ") by Christoffer Rehn.\n"
+                       "You need a recent version of Ndless that supports file associations "
+                       "for nFrotz to work.\nIf it doesn't, update Ndless and try again.\n"
                        "Do you want to install nFrotz?",
                        "Yes", "No") == 1) {
         char buffer[BUF_SIZE] = {'\0'};
         FILE *fp;
         int i;
-        assert_ndless_rev(538);
+        //assert_ndless_rev(538);
         fp = fopen(NDLESS_CFG, "a+");
         if (fp == NULL) {
             show_msgbox("Installer", "Couldn't access " NDLESS_CFG "!");
@@ -198,13 +200,15 @@ void install_nfrotz(void) {
         fseek(fp, 0, SEEK_SET);
         while (_fgets(buffer, BUF_SIZE, fp) != NULL)
             if (strcmp(buffer, "ext.z=nFrotz\n") == 0) {
-                show_msgbox("Installer", "nFrotz has already been installed.");
+                show_msgbox("Installer",
+                            "nFrotz has already been installed."
+                            " You should be able to launch any Z-code files with a .z extension.");
                 fclose(fp);
                 return;
             }
         fprintf(fp, "ext.z=nFrotz\next.Z=nFrotz\n");
         fclose(fp);
-        show_msgbox("Installer", "Done!\nYou should now be able to launch any Z-code files with the .z extension.");
+        show_msgbox("Installer", "Done!\nYou should now be able to launch any Z-code files with a .z extension.");
     }
 }
 
