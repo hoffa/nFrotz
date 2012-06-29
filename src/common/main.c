@@ -167,22 +167,30 @@ void z_piracy (void)
 
 int cdecl main (int argc, char *argv[])
 {
+    bool ext_start = TRUE; //argc > 1;
     int new_argc = 5;
     char *new_argv[] = {
         argv[0],
-        //"-p",
-        "-w 53",
-        "-h 30",
-        "-Z 2",
-        "Examples/ZORK1.DAT.tns"
+        "-p",
+        "-w 51",
+        "-h 28",
+        "Examples/ZORK1.DAT.tns" //ext_start ? argv[1] : NULL
     };
 
     if (has_colors)
         lcd_ingray ();
 
-    memset (SCREEN_BASE_ADDRESS, 0, SCREEN_BYTES_SIZE);
-    nio_InitConsole (&console, 53, 30, 0, 0, BLACK, WHITE);
+    clrscr();
+    nio_InitConsole (&console, 51, 28, 6, 8, WHITE, BLACK);
+    if (!ext_start)
+        nio_printf(&console, "nFrotz %s by Christoffer Rehn\n"
+                             "Ported from the original Frotz (frotz.sf.net)", NFROTZ_VERSION);
     nio_DrawConsole (&console);
+    if (!ext_start) {
+        wait_key_pressed();
+        CLEANUP();
+        return 0;
+    }
 
     os_init_setup ();
 

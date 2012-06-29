@@ -165,9 +165,9 @@ void os_display_char (zchar c)
 {
     if (c >= ZC_LATIN1_MIN && c <= ZC_LATIN1_MAX) {
         if (plain_ascii) {
-            char *ptr = latin1_to_ascii + 4 * (c - ZC_LATIN1_MIN);
+                char *ptr = latin1_to_ascii + 4 * (c - ZC_LATIN1_MIN);
             do
-    dumb_display_char(*ptr++);
+                dumb_display_char(*ptr++);
             while (*ptr != ' ');
         } else
             dumb_display_char(c);
@@ -475,15 +475,15 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
 
     } else if (*setting == 'r') {
         switch (setting[1]) {
-        case 'n': rv_mode = RV_NONE; break;
-        case 'o': rv_mode = RV_DOUBLESTRIKE; break;
-        case 'u': rv_mode = RV_UNDERLINE; break;
-        case 'c': rv_mode = RV_CAPS; break;
-        case 'b': rv_blank_char = setting[2] ? setting[2] : ' '; break;
-        default: return FALSE;
+            case 'n': rv_mode = RV_NONE; break;
+            case 'o': rv_mode = RV_DOUBLESTRIKE; break;
+            case 'u': rv_mode = RV_UNDERLINE; break;
+            case 'c': rv_mode = RV_CAPS; break;
+            case 'b': rv_blank_char = setting[2] ? setting[2] : ' '; break;
+            default: return FALSE;
         }
         nio_printf(&console, "Reverse-video mode %s, blanks reverse to '%c': ",
-         rv_names[rv_mode], rv_blank_char);
+                             rv_names[rv_mode], rv_blank_char);
         for (p = "sample reverse text"; *p; p++)
             show_cell(make_cell(REVERSE_STYLE, *p));
         nio_PrintChar(&console, '\n');
@@ -493,14 +493,14 @@ bool dumb_output_handle_setting(const char *setting, bool show_cursor,
 
     } else if (!strcmp(setting, "set")) {
         nio_printf(&console, "Compression Mode %s, hiding top %d lines\n",
-         compression_names[compression_mode], hide_lines);
+                             compression_names[compression_mode], hide_lines);
         nio_printf(&console, "Picture Boxes display %s\n", show_pictures ? "ON" : "OFF");
         nio_printf(&console, "Visual Bell %s\n", visual_bell ? "ON" : "OFF");
         os_beep(1); os_beep(2);
         nio_printf(&console, "Line Numbering %s\n", show_line_numbers ? "ON" : "OFF");
         nio_printf(&console, "Line-Type display %s\n", show_line_types ? "ON" : "OFF");
         nio_printf(&console, "Reverse-Video mode %s, Blanks reverse to '%c': ",
-         rv_names[rv_mode], rv_blank_char);
+                             rv_names[rv_mode], rv_blank_char);
         for (p = "sample reverse text"; *p; p++)
             show_cell(make_cell(REVERSE_STYLE, *p));
         nio_PrintChar(&console, '\n');

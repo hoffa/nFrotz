@@ -28,7 +28,7 @@ OBJECTS = $(SOURCES:.c=.o)
 CC = nspire-gcc
 LD = nspire-ld
 OBJCOPY = arm-none-eabi-objcopy
-CFLAGS = -Wall -Wextra -Ofast -DVERSION="\"2.43d\""
+CFLAGS = -Wall -Wextra -Os -DVERSION="\"2.43d\""
 LDFLAGS =
 LIBS = -lnspireio2
 

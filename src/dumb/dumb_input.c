@@ -56,7 +56,7 @@ static char runtime_usage[] =
 ;
 
 static float speed = 1;
-static bool do_more_prompts = TRUE;
+static bool do_more_prompts = FALSE;
 
 enum input_type {
     INPUT_CHAR,
@@ -204,7 +204,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
     for (;;) {
         char *command;
         if (prompt)
-            fputs(prompt, stdout);
+            nio_PrintStr(&console, prompt);
         else
             dumb_show_prompt(show_cursor, (timeout ? "tTD" : ")>}")[type]);
         getline(s);
@@ -256,7 +256,7 @@ static bool dumb_read_line(char *s, char *prompt, bool show_cursor,
             }
         } else if (!strcmp(command, "help")) {
             if (!do_more_prompts)
-                fputs(runtime_usage, stdout);
+                nio_PrintStr(&console, runtime_usage);
             else {
                 char *current_page, *next_page;
                 current_page = next_page = runtime_usage;
