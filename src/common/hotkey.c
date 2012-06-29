@@ -1,5 +1,5 @@
 /* hotkey.c - Hot key functions
- *	Copyright (c) 1995-1997 Stefan Jokisch
+ *      Copyright (c) 1995-1997 Stefan Jokisch
  *
  * This file is part of Frotz.
  *
@@ -67,15 +67,15 @@ static bool hot_key_help (void) {
     print_string ("Help\n");
 
     print_string (
-	"\n"
-	"Alt-D  debugging options\n"
-	"Alt-H  help\n"
-	"Alt-N  new game\n"
-	"Alt-P  playback on\n"
-	"Alt-R  recording on/off\n"
-	"Alt-S  seed random numbers\n"
-	"Alt-U  undo one turn\n"
-	"Alt-X  exit game\n");
+        "\n"
+        "Alt-D  debugging options\n"
+        "Alt-H  help\n"
+        "Alt-N  new game\n"
+        "Alt-P  playback on\n"
+        "Alt-R  recording on/off\n"
+        "Alt-S  seed random numbers\n"
+        "Alt-U  undo one turn\n"
+        "Alt-X  exit game\n");
 
     return FALSE;
 
@@ -94,7 +94,7 @@ static bool hot_key_playback (void)
     print_string ("Playback on\n");
 
     if (!istream_replay)
-	replay_open ();
+        replay_open ();
 
     return FALSE;
 
@@ -111,14 +111,14 @@ static bool hot_key_recording (void)
 {
 
     if (istream_replay) {
-	print_string ("Playback off\n");
-	replay_close ();
+        print_string ("Playback off\n");
+        replay_close ();
     } else if (ostream_record) {
-	print_string ("Recording off\n");
-	record_close ();
+        print_string ("Recording off\n");
+        record_close ();
     } else {
-	print_string ("Recording on\n");
-	record_open ();
+        print_string ("Recording on\n");
+        record_open ();
     }
 
     return FALSE;
@@ -158,15 +158,15 @@ static bool hot_key_undo (void)
 
     if (restore_undo ()) {
 
-	if (h_version >= V5) {		/* for V5+ games we must */
-	    store (2);			/* store 2 (for success) */
-	    return TRUE;		/* and abort the input   */
-	}
+        if (h_version >= V5) {          /* for V5+ games we must */
+            store (2);                  /* store 2 (for success) */
+            return TRUE;                /* and abort the input   */
+        }
 
-	if (h_version <= V3) {		/* for V3- games we must */
-	    z_show_status ();		/* draw the status line  */
-	    return FALSE;		/* and continue input    */
-	}
+        if (h_version <= V3) {          /* for V3- games we must */
+            z_show_status ();           /* draw the status line  */
+            return FALSE;               /* and continue input    */
+        }
 
     } else print_string ("No more undo information available.\n");
 
@@ -188,8 +188,8 @@ static bool hot_key_restart (void)
 
     if (read_yes_or_no ("Do you wish to restart")) {
 
-	z_restart ();
-	return TRUE;
+        z_restart ();
+        return TRUE;
 
     } else return FALSE;
 
@@ -209,8 +209,8 @@ static bool hot_key_quit (void)
 
     if (read_yes_or_no ("Do you wish to quit")) {
 
-	z_quit ();
-	return TRUE;
+        z_quit ();
+        return TRUE;
 
     } else return FALSE;
 
@@ -229,27 +229,27 @@ bool handle_hot_key (zchar key)
 
     if (cwin == 0) {
 
-	bool aborting;
+        bool aborting;
 
-	aborting = FALSE;
+        aborting = FALSE;
 
-	print_string ("\nHot key -- ");
+        print_string ("\nHot key -- ");
 
-	switch (key) {
-	    case ZC_HKEY_RECORD: aborting = hot_key_recording (); break;
-	    case ZC_HKEY_PLAYBACK: aborting = hot_key_playback (); break;
-	    case ZC_HKEY_SEED: aborting = hot_key_seed (); break;
-	    case ZC_HKEY_UNDO: aborting = hot_key_undo (); break;
-	    case ZC_HKEY_RESTART: aborting = hot_key_restart (); break;
-	    case ZC_HKEY_QUIT: aborting = hot_key_quit (); break;
-	    case ZC_HKEY_DEBUG: aborting = hot_key_debugging (); break;
-	    case ZC_HKEY_HELP: aborting = hot_key_help (); break;
-	}
+        switch (key) {
+            case ZC_HKEY_RECORD: aborting = hot_key_recording (); break;
+            case ZC_HKEY_PLAYBACK: aborting = hot_key_playback (); break;
+            case ZC_HKEY_SEED: aborting = hot_key_seed (); break;
+            case ZC_HKEY_UNDO: aborting = hot_key_undo (); break;
+            case ZC_HKEY_RESTART: aborting = hot_key_restart (); break;
+            case ZC_HKEY_QUIT: aborting = hot_key_quit (); break;
+            case ZC_HKEY_DEBUG: aborting = hot_key_debugging (); break;
+            case ZC_HKEY_HELP: aborting = hot_key_help (); break;
+        }
 
-	if (aborting)
-	    return TRUE;
+        if (aborting)
+            return TRUE;
 
-	print_string ("\nContinue input...\n");
+        print_string ("\nContinue input...\n");
 
     }
 

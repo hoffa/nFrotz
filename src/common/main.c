@@ -168,12 +168,13 @@ void z_piracy (void)
 int cdecl main (int argc, char *argv[])
 {
     bool ext_start = TRUE; //argc > 1;
-    int new_argc = 5;
+    int new_argc = 6;
     char *new_argv[] = {
         argv[0],
         "-p",
         "-w 51",
         "-h 28",
+        "-Z 2",
         "Examples/ZORK1.DAT.tns" //ext_start ? argv[1] : NULL
     };
 
