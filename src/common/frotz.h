@@ -14,7 +14,7 @@
 #include <os.h>
 #include <nspireio2.h>
 
-#define NFROTZ_VERSION "0.0.1"
+#define NFROTZ_VERSION "0.1"
 #define RTC() *(volatile unsigned *)0x90090000
 
 #define CLEANUP() do { \

@@ -158,6 +158,56 @@ void z_piracy (void)
 
 }/* z_piracy */
 
+#define NDLESS_CFG "/documents/ndless/ndless.cfg.tns"
+#define BUF_SIZE 256
+
+char *_fgets(char *s, int n, FILE *stream) {
+    int done = 0;
+    int i;
+    if (s == NULL || n <= 0 || stream == NULL)
+        return NULL;
+    for (i = 0; !done && i < n - 1; ++i) {
+        int c = fgetc(stream);
+        if (c == EOF) {
+            done = 1;
+            --i;
+        } else {
+            s[i] = c;
+            if (c == '\n')
+                done = 1;
+        }
+    }
+    s[i] = '\0';
+    return (i == 0) ? NULL : s;
+}
+
+void install_nfrotz(void) {
+    if (show_msgbox_2b("Installer",
+                       "nFrotz " NFROTZ_VERSION " (based on Frotz " VERSION ") by Christoffer Rehn.\n"
+                       "Do you want to install nFrotz?",
+                       "Yes", "No") == 1) {
+        char buffer[BUF_SIZE] = {'\0'};
+        FILE *fp;
+        int i;
+        assert_ndless_rev(538);
+        fp = fopen(NDLESS_CFG, "a+");
+        if (fp == NULL) {
+            show_msgbox("Installer", "Couldn't access " NDLESS_CFG "!");
+            return;
+        }
+        fseek(fp, 0, SEEK_SET);
+        while (_fgets(buffer, BUF_SIZE, fp) != NULL)
+            if (strcmp(buffer, "ext.z=nFrotz\n") == 0) {
+                show_msgbox("Installer", "nFrotz has already been installed.");
+                fclose(fp);
+                return;
+            }
+        fprintf(fp, "ext.z=nFrotz\next.Z=nFrotz\n");
+        fclose(fp);
+        show_msgbox("Installer", "Done!\nYou should now be able to launch any Z-code files with the .z extension.");
+    }
+}
+
 /*
  * main
  *
@@ -167,7 +217,7 @@ void z_piracy (void)
 
 int cdecl main (int argc, char *argv[])
 {
-    bool ext_start = TRUE; //argc > 1;
+    bool ext_start = argc > 1;
     int new_argc = 6;
     char *new_argv[] = {
         argv[0],
@@ -175,23 +225,20 @@ int cdecl main (int argc, char *argv[])
         "-w 51",
         "-h 28",
         "-Z 2",
-        "Examples/ZORK1.DAT.tns" //ext_start ? argv[1] : NULL
+        ext_start ? argv[1] : NULL
     };
+
+    if (!ext_start) {
+        install_nfrotz ();
+        return 0;
+    }
 
     if (has_colors)
         lcd_ingray ();
 
-    clrscr();
+    clrscr ();
+
     nio_InitConsole (&console, 51, 28, 6, 8, WHITE, BLACK);
-    if (!ext_start)
-        PRINT ("nFrotz %s by Christoffer Rehn\n"
-               "Ported from the original Frotz (frotz.sf.net)", NFROTZ_VERSION);
-    nio_DrawConsole (&console);
-    if (!ext_start) {
-        wait_key_pressed();
-        CLEANUP();
-        return 0;
-    }
 
     os_init_setup ();
 
@@ -219,7 +266,7 @@ int cdecl main (int argc, char *argv[])
 
     os_reset_screen ();
 
-    CLEANUP();
+    CLEANUP ();
 
     return 0;
 
